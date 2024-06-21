@@ -1,6 +1,8 @@
-/* Archivo: your-stylesheet.css */
+.card {
+    width: 100%;
+    max-width: 500px;
+}
 
-/* Estilos para el contenedor del formulario de login */
 .login-form-container {
     padding: 9%;
     background: #f05837;
@@ -8,14 +10,12 @@
     border-radius: 1rem;
 }
 
-/* Título del formulario */
 .login-form-container h3 {
     text-align: center;
-    margin-bottom: 12%;
+    margin-bottom: 15%;
     color: #fff;
 }
 
-/* Botón de enviar */
 .btn-submit {
     font-weight: 600;
     width: 50%;
@@ -29,16 +29,4 @@
 
 .btn-submit:hover {
     background-color: #e0e0e0;
-}
-
-/* Botón de olvidar contraseña */
-.btn-forget-pwd {
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.btn-forget-pwd:hover {
-    text-decoration: none;
-    color: #dcdcdc;
 }
