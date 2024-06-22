@@ -1,23 +1,40 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import './estilos/LoginPage.css';
+import '../styles/LoginPage.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function LoginPage() {
+
+export default function LoginPage({ setEstaAutenticado }) {
   const [ruc, setRuc] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { navigate } = useNavigate();
+  const navigate = useNavigate();
 
 
   const Enviar = async (e) => {
-    const isAuthenticated = true;
- 
-    if (isAuthenticated) {
+    e.preventDefault();
+
+    if (ruc === '' && password === '') {
+      setError('Ingrese el RUC y la contraseña para poder continuar');
+      return;
+    }
+
+    if (ruc === '') {
+      setError('Ingrese el RUC para continuar');
+      return;
+    }
+    if (password === '') {
+      setError('Ingrese la contraseña para continuar');
+      return;
+    }
+    
+    if (ruc === '1' && password === '1') {
+      setError('');
+      setEstaAutenticado(true);            
       navigate("/dashboard");
     } else {
-      alert("Credenciales incorrectas");
+      setError('RUC o contraseña incorrecta');
     }
   }
 
@@ -43,7 +60,7 @@ export default function LoginPage() {
                     </div>
                     <input type="password" className="form-control" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} />
                   </div>
-                  {error && <div className="text-danger mt-3">{error}</div>}
+                  {error && <div className="text-danger mt-3" align="center">{error}</div>}
                   <div className="form-group mt-3">
                     <input type="submit" value="Acceder" className="btn bg-secondary float-end text-white w-100" name="login-btn" onClick={ Enviar } />
                   </div>
