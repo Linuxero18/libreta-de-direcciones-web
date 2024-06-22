@@ -1,7 +1,7 @@
-import { useLocation } from "react-router-dom";
+import React from 'react';
+import { Route, Navigate } from "react-router-dom";
 
 export default function PrivateRoute({ children }) {
-  const { state } = useLocation();
-
-  return state?.logged ? children : <Navigate to='/' />
+  const isAuthenticated = true;
+    return isAuthenticated ? children : <Navigate to="/login" />;
 }

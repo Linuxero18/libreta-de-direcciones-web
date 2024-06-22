@@ -1,5 +1,5 @@
 export default function DashboardPage() {
     return (
-        <h1>DashboardPage</h1>
+        <h1>BIENVENIDO AL BASHBOARD AQUI SE VERAN LOS DATOS DE CLIENTE</h1>
     )
 }

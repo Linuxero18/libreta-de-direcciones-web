@@ -2,27 +2,26 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './estilos/LoginPage.css';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function LoginPage({setToken}) {
-  const [username, setUserName] = useState('');
+export default function LoginPage() {
+  const [ruc, setRuc] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { navigate } = useNavigate();
+
 
   const Enviar = async (e) => {
-    e.preventDefault();
-    try{
-      const respuesta = await axios.post('',{
-        username,
-        password,
-      });
-      setToken(respuesta.data.token)
-    } catch {
-      setError("Credenciales incorrectas")
+    const isAuthenticated = true;
+ 
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    } else {
+      alert("Credenciales incorrectas");
     }
   }
 
-
-    return (
+  return (
       <>
         <div id="template-bg-1">
           <div className="d-flex flex-column min-vh-100 justify-content-center align-items-center">
@@ -36,7 +35,7 @@ export default function LoginPage({setToken}) {
                     <div className="bg-secondary rounded-start">
                       <span className="m-3"><i className="fas fa-user mt-2"></i></span>
                     </div>
-                    <input type="text" className="form-control" placeholder="Usuario" value={username} onChange={(e) => setUserName(e.target.value)} />
+                    <input type="text" className="form-control" placeholder="RUC" value={ruc} onChange={(e) => setRuc(e.target.value)} />
                   </div>
                   <div className="input-group form-group mt-3">
                     <div className="bg-secondary rounded-start">
@@ -46,7 +45,7 @@ export default function LoginPage({setToken}) {
                   </div>
                   {error && <div className="text-danger mt-3">{error}</div>}
                   <div className="form-group mt-3">
-                    <input type="submit" value="Acceder" className="btn bg-secondary float-end text-white w-100" name="login-btn" />
+                    <input type="submit" value="Acceder" className="btn bg-secondary float-end text-white w-100" name="login-btn" onClick={ Enviar } />
                   </div>
                 </form>
               </div>
