@@ -3,6 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../styles/LoginPage.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 export default function LoginPage({ setEstaAutenticado }) {
@@ -29,12 +30,24 @@ export default function LoginPage({ setEstaAutenticado }) {
       return;
     }
     
-    if (ruc === '1' && password === '1') {
-      setError('');
-      setEstaAutenticado(true);            
-      navigate("/dashboard");
-    } else {
-      setError('RUC o contraseña incorrecta');
+    try {
+      const response = await axios.get(`http://localhost:4000/passwords/${ruc}`);
+      const usuario = response.data;
+
+      if (usuario.length > 0){
+        const user = usuario.find((user) => user.PASSWORD === password);
+          if (user) {
+            setError('');
+            setEstaAutenticado(true);
+            navigate('/dashboard', { state: { usuario } });
+          } else {
+            setError('RUC o contraseña incorrecta');
+          }
+      } else {
+        setError('RUC o contraseña incorrecta');
+      }
+    } catch (e) {
+      setError('No se pudo obtener la información del usuario');
     }
   }
 
