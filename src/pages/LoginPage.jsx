@@ -39,7 +39,7 @@ export default function LoginPage({ setEstaAutenticado }) {
           if (user) {
             setError('');
             setEstaAutenticado(true);
-            navigate('/dashboard', { state: { usuario } });
+            navigate(`/dashboard`, { state: { ruc: ruc } });
           } else {
             setError('RUC o contraseña incorrecta');
           }
@@ -60,7 +60,7 @@ export default function LoginPage({ setEstaAutenticado }) {
                 <h3>INICIAR SESION</h3>
               </div>
               <div className="card-body w-100">
-                <form name="login">
+                <form name="login" onSubmit={Enviar}>
                   <div className="input-group form-group mt-3">
                     <div className="bg-secondary rounded-start">
                       <span className="m-3"><i className="fas fa-user mt-2"></i></span>
@@ -75,7 +75,7 @@ export default function LoginPage({ setEstaAutenticado }) {
                   </div>
                   {error && <div className="text-danger mt-3" align="center">{error}</div>}
                   <div className="form-group mt-3">
-                    <input type="submit" value="Acceder" className="btn bg-secondary float-end text-white w-100" name="login-btn" onClick={ Enviar } />
+                    <button type="submit" className="btn bg-secondary float-end text-white w-100" name="login-btn">Acceder</button>
                   </div>
                 </form>
               </div>

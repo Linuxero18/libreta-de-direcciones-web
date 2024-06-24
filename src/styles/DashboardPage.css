@@ -1,0 +1,36 @@
+.container {
+  padding: 0;
+  margin: 0 auto;
+  margin-top: 200px;
+}
+
+.table {
+  width: 100%;
+  margin: 0;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  text-align: center;
+}
+
+.btn {
+    width: 110px;
+    height: auto;
+    margin-left: auto;
+    margin-top: 15px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 767px) {
+  .table th,
+  .table td {
+    padding: 4px;
+    font-size: 12px;
+  }
+}
