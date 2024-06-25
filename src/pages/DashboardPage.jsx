@@ -14,9 +14,7 @@ export default function DashboardPage() {
   const location = useLocation();
   const ruc = location.state?.ruc;
 
-  useEffect(() => {
-    const obtenerServicios = async () => {
-
+  const obtenerServicios = async () => {
       if (!ruc) {
         console.log("No se encontró el RUC");
         return;
@@ -30,8 +28,9 @@ export default function DashboardPage() {
       } catch (e) {
         console.error(e);
       }
-    };
+  };
 
+  useEffect(() => {
     if (ruc){
       obtenerServicios();
     }
@@ -64,9 +63,22 @@ export default function DashboardPage() {
 
   const Guardar = async (e) => {
     e.preventDefault();
-    console.log("Data: ", formularioData);
+
+    const datosActualizados = {
+      nombre: formularioData.NOMBRE,
+      correo: formularioData.CORREO,
+      contacto: formularioData.CONTACTO,
+      telefono: formularioData.TELEFONO,
+      whatsapp: formularioData.WHATSAPP,
+      rol: formularioData.ROL
+    };
+    
     try {
-      await axios.put(`http://localhost:4000/clientes/${servicioSeleccionado}`, formularioData);
+      await axios.put(`http://localhost:4000/clientes/${servicioSeleccionado}`, datosActualizados, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       setError("El servicio se ha actualizado correctamente.");
       setMostrarFormulario(false);
       await obtenerServicios();
