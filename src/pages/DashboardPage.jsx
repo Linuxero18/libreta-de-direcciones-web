@@ -10,6 +10,7 @@ export default function DashboardPage() {
   const [error, setError] = useState('');
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [formularioData, setFormularioData] = useState({});
+  const [cargando, setCargando] = useState(false);
   const location = useLocation();
   const ruc = location.state?.ruc;
 
@@ -30,6 +31,7 @@ export default function DashboardPage() {
         console.error(e);
       }
     };
+
     if (ruc){
       obtenerServicios();
     }
@@ -45,7 +47,7 @@ export default function DashboardPage() {
     setError("Abonado seleccionado: " + abonado);
   };
 
-  const Editar = () => {
+  const Actualizar = () => {
     if (servicioSeleccionado) {
       const servicioParaEditar = servicios.find(s => s.ABONADO === servicioSeleccionado);
       setFormularioData(servicioParaEditar);
@@ -55,10 +57,29 @@ export default function DashboardPage() {
     }
   };
 
+  const InputData = (e) => {
+    const { name, value } = e.target;
+    setFormularioData(prevState => ({ ...prevState, [name]: value }));
+  };
+
+  const Guardar = async (e) => {
+    e.preventDefault();
+    console.log("Data: ", formularioData);
+    try {
+      await axios.put(`http://localhost:4000/clientes/${servicioSeleccionado}`, formularioData);
+      setError("El servicio se ha actualizado correctamente.");
+      setMostrarFormulario(false);
+      await obtenerServicios();
+    } catch (e) {
+      setError("Error al actualizar el servicio.");
+      console.log(e);
+    }
+  }
+
   return (
     <div className="container">
       <h1 className="mt-5 mb-4" />
-      <table className="table table-hover table-bordered">
+      <table className="table table-hover table-bordered" key={servicios.length}>
         <thead className="thead-dark"> 
           <tr>
             <th>ABONADO</th>
@@ -68,7 +89,7 @@ export default function DashboardPage() {
             <th>TELEFONO</th>
             <th>WHATSAPP</th>
             <th>ROL</th>
-            <th></th>
+            <td></td>
           </tr>
         </thead>
         <tbody>
@@ -92,9 +113,39 @@ export default function DashboardPage() {
       <div className="d-grid gap-2">
         <div className="footer">
         {error && <div className="text-danger mt-3" align="left">{error}</div>}
-        <button className="btn btn-primary" type="button">Actualizar</button>
+        <button className="btn btn-primary" type="button" onClick={Actualizar}>Actualizar</button>
         </div>
       </div>
+      {mostrarFormulario && (
+        <form onSubmit={Guardar}>
+          <h2 className="mt-5 mb-4">Actualización de datos del RUC {formularioData.RUC}</h2>
+          <div className="mb-3">
+            <label htmlFor="nombre" className="form-label">Nombre:</label>
+            <input type="text" className="form-control" id="nombre" name="NOMBRE" value={formularioData.NOMBRE || ''} onChange={InputData} required/>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="correo" className="form-label">Correo:</label>
+            <input type="email" className="form-control" id="correo" name="CORREO" value={formularioData.CORREO || ''} onChange={InputData} required/>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="contacto" className="form-label">Contacto:</label>
+            <input type="text" className="form-control" id="contacto" name="CONTACTO" value={formularioData.CONTACTO || ''} onChange={InputData} required/>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="telefono" className="form-label">Teléfono:</label>
+            <input type="text" className="form-control" id="telefono" name="TELEFONO" value={formularioData.TELEFONO || ''} onChange={InputData} required/>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="whatsapp" className="form-label">WhatsApp:</label>
+            <input type="text" className="form-control" id="whatsapp" name="WHATSAPP" value={formularioData.WHATSAPP || ''} onChange={InputData} required/>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="rol" className="form-label">Rol:</label>
+            <input type="text" className="form-control" id="rol" name="ROL" value={formularioData.ROL || ''} onChange={InputData} required/>
+          </div>
+          <button type="submit" className="btn btn-primary" disabled={cargando}>{cargando ? 'Guardando ...' : 'Guardar'}</button>
+        </form>
+      )}
     </div>
   );
 }
