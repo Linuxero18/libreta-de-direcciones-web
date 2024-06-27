@@ -1,7 +1,18 @@
 .container {
   padding: 0;
   margin: 0 auto;
-  margin-top: 100px;
+  margin-top: 80px;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.container2 {
+  padding: 0;
+  margin: 0 auto;
+  margin-top: 35px;
+  margin-bottom: 35px;
+  font-weight: 500;
+  font-size: 1.1rem;
 }
 
 .table {
@@ -16,15 +27,57 @@
 }
 
 .btn {
-    width: 110px;
-    height: auto;
-    margin-left: auto;
-    margin-top: 15px;
+  width: 110px;
+  height: auto;
+  margin-left: auto;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border-radius: 0.7rem;
+}
+
+.btnform{
+  display: block;
+  width: 20%;
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.headerform {
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .footer {
   display: flex;
-  align-items: center;
+}
+
+.group-btn {
+  display: flex;;
+  margin-left: auto;
+}
+
+.group-btn button {
+  margin-left: 15px;
+}
+
+.card {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.form-control {
+  width: 90%;
+  margin: auto;
+  padding: 5px;
+}
+
+.form-label {
+  font-size: auto;
+  margin-left: 20px;
 }
 
 @media (max-width: 767px) {
@@ -33,4 +86,11 @@
     padding: 4px;
     font-size: 12px;
   }
+}
+
+/* Ocultar controles de incremento/decremento en Chrome, Safari, Edge, y Opera */
+.spin::-webkit-outer-spin-button,
+.spin::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
