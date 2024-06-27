@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function AdminPage() {
   const [servicios, setServicios] = useState([]);
@@ -20,15 +21,36 @@ export default function AdminPage() {
 
   return (
     <div className="container mt-5">
-      <h1>Listado de Servicios</h1>
+      <h1 style={{fontFamily: 'inherit'}} className="mb-4">Listado de Servicios</h1>
       {servicios.length > 0 ? (
-        <ul>
-          {servicios.map((servicio, index) => (
-            <li key={index}>
-              {servicio.ABONADO},{servicio.NOMBRE} {servicio.RUC}, {servicio.WHATSAPP}
-            </li>
-          ))}
-        </ul>
+        <table className="table table-striped mb-5">
+          <thead>
+            <tr>
+              <th style={{ backgroundColor: 'GrayText', color: 'white' }}>Abonado</th>
+              <th style={{ backgroundColor: 'GrayText', color: 'white' }}>Nombre</th>
+              <th style={{ backgroundColor: 'GrayText', color: 'white' }}>RUC</th>
+              <th style={{ backgroundColor: 'GrayText', color: 'white' }}>Correo</th>
+              <th style={{ backgroundColor: 'GrayText', color: 'white' }}>Contacto</th>
+              <th style={{ backgroundColor: 'GrayText', color: 'white' }}>Teléfono</th>
+              <th style={{ backgroundColor: 'GrayText', color: 'white' }}>WhatsApp</th>
+              <th style={{ backgroundColor: 'GrayText', color: 'white' }}>Rol</th>
+            </tr>
+          </thead>
+          <tbody>
+            {servicios.map((servicio, index) => (
+              <tr key={index}>
+                <td>{servicio.ABONADO}</td>
+                <td>{servicio.NOMBRE}</td>
+                <td>{servicio.RUC}</td>
+                <td>{servicio.CORREO}</td>
+                <td>{servicio.CONTACTO}</td>
+                <td>{servicio.TELEFONO}</td>
+                <td>{servicio.WHATSAPP}</td>
+                <td>{servicio.ROL}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <p>No hay servicios disponibles.</p>
       )}
