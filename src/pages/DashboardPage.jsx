@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/DashboardPage.css';
+import { format, parseISO } from 'date-fns'; //manejo de fechas
+import { es } from 'date-fns/locale'; //idioma español
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -10,6 +12,8 @@ export default function DashboardPage() {
   const [error, setError] = useState('');
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [formularioData, setFormularioData] = useState({});
+  const [mostrarDetalles, setMostrarDetalles] = useState(false);
+  const [historial, setHistorial] = useState([]);
   const [cargando, setCargando] = useState(false);
   const location = useLocation();
   const ruc = location.state?.ruc;
@@ -40,9 +44,19 @@ export default function DashboardPage() {
     return <div className="container mt-5">Cargando datos...</div>
   }
 
+  const obtenerHistorial = async () => {
+    try {
+      const reponse = await axios.get(`http://localhost:4000/historial/${servicioSeleccionado}`);
+      setHistorial(reponse.data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const RadioChange = (abonado) => {
     setServicioSeleccionado(abonado);
     setMostrarFormulario(false);
+    setMostrarDetalles(false);
     setError("Abonado seleccionado: " + abonado);
   };
 
@@ -51,6 +65,7 @@ export default function DashboardPage() {
       const servicioParaEditar = servicios.find(s => s.ABONADO === servicioSeleccionado);
       setFormularioData(servicioParaEditar);
       setMostrarFormulario(true);
+      setMostrarDetalles(false);
     } else {
       setError("Por favor, seleccione un servicio para actualizar.");
     }
@@ -73,6 +88,8 @@ export default function DashboardPage() {
     e.preventDefault();
 
     const datosActualizados = {
+      abonado: servicioSeleccionado,
+      ruc: formularioData.RUC || ruc,
       nombre: formularioData.NOMBRE,
       correo: formularioData.CORREO,
       contacto: formularioData.CONTACTO,
@@ -90,18 +107,31 @@ export default function DashboardPage() {
         }
       });
 
-      const responseHistorial = await axios.post(`http://localhost:4000/historial`, {
-        abonado: servicioSeleccionado,
-        ...datosActualizados,
-        fu_modificacion: new Date().toISOString()
-      });
-
       setError("El servicio "+ servicioSeleccionado +" se ha actualizado correctamente.");
       setMostrarFormulario(false);
       await obtenerServicios();
+
+      //Preparar los datos para el historial
+      const datosHistorial = {
+        abonado: servicioSeleccionado,
+        ruc: datosActualizados.ruc,
+        nombre: datosActualizados.nombre,
+        correo: datosActualizados.correo,
+        contacto: datosActualizados.contacto,
+        telefono: datosActualizados.telefono,
+        whatsapp: datosActualizados.whatsapp,
+        rol: datosActualizados.rol
+      };  
+
+      //Guardar en el historial todos los datos del formulario
+      const repsonseHistorial = await axios.post(`http://localhost:4000/historial`, datosHistorial, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log("Respuesta del servidor:", repsonseHistorial.data);
       console.log("DATA:" + JSON.stringify(formularioData));
       console.log("Respuesta del servidor:", response.data); 
-      console.log("Respuesta del servidor tabla historial:", responseHistorial.data);
     } catch (e) {
       setError("Error al actualizar el servicio.");
       console.log(e);
@@ -120,6 +150,20 @@ export default function DashboardPage() {
     setMostrarFormulario(false);
   };
 
+  const Detalles = () => {
+    if (servicioSeleccionado) {
+      setMostrarDetalles(true);
+      setMostrarFormulario(false);
+      obtenerHistorial();
+    } else {
+      setError("Por favor, seleccione un servicio para ver detalles.");
+    }
+  }
+
+  function formatearFecha(fechaUTC){
+    return format(parseISO(fechaUTC), 'dd/MM/yyyy HH:mm:ss', { locale: es });
+  }
+
   return (
     <div className="container">
       <h1 className="mt-5 mb-4" />
@@ -134,7 +178,7 @@ export default function DashboardPage() {
             <th>TELEFONO</th>
             <th>WHATSAPP</th>
             <th>ROL</th>
-            <td></td>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -160,7 +204,7 @@ export default function DashboardPage() {
         <div className="footer">
           {error && <div className="text-danger mt-3" align="left">{error}</div>}
           <div className="group-btn">
-            <button className="btn btn-secondary" type="button">Detalles</button>
+            <button className="btn btn-secondary" type="button" onClick={Detalles}>Detalles</button>
             <button className="btn btn-primary" type="button" onClick={Actualizar}>Actualizar</button>
           </div>
         </div>
@@ -168,7 +212,7 @@ export default function DashboardPage() {
       <div className="container2" align="center">
         {mostrarFormulario && (
           <div className="card">
-            <div class="headerform">DATOS DEL SERVICIO {formularioData.ABONADO} - {formularioData.RUC}</div>
+            <div className="headerform">DATOS DEL SERVICIO {formularioData.ABONADO} - {formularioData.RUC}</div>
               <form onSubmit={GuardarRegistrar}>
                 <div className="mb-3">
                   <label htmlFor="nombre" className="form-label">Nombre:</label>
@@ -206,7 +250,37 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
-      <div className='container3'>
+      <div className="container3" align="center">
+        {mostrarDetalles && (
+          <table className="table table-hover table-bordered">
+            <thead>
+              <tr>
+                <td>Nº</td>
+                <td>NOMBRE</td>
+                <td>CORREO</td>
+                <td>CONTACTO</td>
+                <td>TELEFONO</td>
+                <td>WHATSAPP</td>
+                <td>ROL</td>
+                <td>FECHA DE U. MODIFICACICON</td>
+              </tr>
+            </thead>
+            <tbody>
+              {historial.map((historial, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{historial.NOMBRE}</td>
+                  <td>{historial.CORREO}</td>
+                  <td>{historial.CONTACTO}</td>
+                  <td>{historial.TELEFONO}</td>
+                  <td>{historial.WHATSAPP}</td>
+                  <td>{historial.ROL}</td>
+                  <td>{formatearFecha(historial.FU_MODIFICACION)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
